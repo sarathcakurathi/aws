@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create a WAF WebACL, Rule and an IPSet condition
+
+Resources:
+  WafWebACL:
+    Type: AWS::WAF::WebACL
+    Properties:
+      DefaultAction:
+        Type: Block
+      MetricName: MyWebACL
+      Name: my-web-acl
+      Rules:
+        - Action:
+            Type: Allow
+          Priority: 1
+          RuleId:
+            Ref: WafRule
+
+  WafRule:
+    Type: AWS::WAF::Rule
+    Properties:
+      MetricName: MyWafRule
+      Name: my-waf-rule
+      Predicates:
+        - DataId:
+            Ref: WafIpSet
+          Negated: False
+          Type: IPMatch
+
+  WafIpSet:
+    Type: AWS::WAF::IPSet
+    Properties:
+      Name: my-waf-ipset
+      IPSetDescriptors:
+        - Type: IPV4
+          Value: 192.168.0.0/16
